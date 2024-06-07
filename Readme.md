@@ -1,4 +1,4 @@
-#Student Logs
+# Student Logs
 
 An app to streamline the process of filling out forms for tutoring services.
 
