@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Student Logs</string>
+
+    <string name="home_page_click_to_add_session">Add Session</string>
+    <string name="home_page_click_to_edit_session">Manage Sessions</string>
+    <string name="home_page_click_to_manage_reports">Manage Forms</string>
+
+    <string name="session_data_header">Enter session data</string>
+    <string name="session_data_student_first_name">Student first name</string>
+    <string name="session_data_student_last_name">Student last name</string>
+    <string name="session_data_session_length">Minutes</string>
+    <string name="session_data_start_time">Start Time</string>
+    <string name="session_data_end_time">End Time</string>
+    <string name="session_data_service_type">Service Type</string>
+    <string name="session_data_service_status">Service Status</string>
+    <string name="session_data_location">Session Location</string>
+    <string name="session_data_signature">Parent Signature Here</string>
+    <string name="session_data_date_of_service">Date of Service</string>
+    <string name="session_data_pay_rate">Pay Rate</string>
+    <string name="session_data_in_eims">Session in EIMS</string>
+
+
+</resources>
