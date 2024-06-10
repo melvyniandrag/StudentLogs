@@ -4,6 +4,7 @@
     <string name="home_page_click_to_add_session">Add Session</string>
     <string name="home_page_click_to_edit_session">Manage Sessions</string>
     <string name="home_page_click_to_manage_reports">Manage Forms</string>
+    <string name="home_page_manage_students">Manage Students</string>
 
     <string name="session_data_header">Enter session data</string>
     <string name="session_data_student_first_name">Student first name</string>

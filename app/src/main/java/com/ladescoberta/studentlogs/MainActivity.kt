@@ -1,5 +1,7 @@
 package com.ladescoberta.studentlogs
 
+import ManageStudents
+import ManageStudentsScreen
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,15 +24,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.ladescoberta.studentlogs.database.MainRepository
 import com.ladescoberta.studentlogs.ui.theme.StudentLogsTheme
 import kotlinx.serialization.Serializable
 
 private const val TAG = "Investigation"
 
 class MainActivity : ComponentActivity() {
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val repository = MainRepository(this)
         enableEdgeToEdge()
         setContent {
             StudentLogsTheme {
@@ -45,6 +51,16 @@ class MainActivity : ComponentActivity() {
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ){
+                            Button(onClick = {
+                                navController.navigate(ManageStudents)
+                            },
+                                modifier = Modifier
+                                    .size(width = 200.dp, height = 80.dp)
+                                    .padding(10.dp)
+                            ){
+                                Text(text = stringResource(R.string.home_page_manage_students))
+                            }
+
                             Button(onClick = {
                                 navController.navigate(AddRowToBillingInvoice)
                             },
@@ -87,18 +103,6 @@ class MainActivity : ComponentActivity() {
                             ){
                                 Text(text = "go to test page")
                             }
-
-                            Button(onClick = {
-                                navController.navigate(ScreenB(
-                                    name="Melvyn",
-                                    age=35
-                                ))
-                            },
-                                modifier = Modifier.size(width=200.dp, height=80.dp).padding(10.dp)
-                            ){
-                                Text(text = "Go to screen B")
-                            }
-
                         }
                     }
                     composable<AddRowToBillingInvoice> {
@@ -137,15 +141,18 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-                    composable<ScreenB> {
-                        val args = it.toRoute<ScreenB>()
-                        Column(
-                            modifier=Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ){
-                            Text(text = "${args.name}, ${args.age} years old")
-                        }
+                    composable<ManageStudents> {
+                        ManageStudentsScreen(
+                            onDone = {
+                                //val success = navController.popBackStack()
+                                //Log.e(TAG, "successful pop? " + success.toString())
+                                // TODO WHY DOESNT popBackStack always work?
+                                if (!navController.popBackStack()) {
+                                    navController.navigate(ScreenA)
+                                }
+                            },
+                            repository = repository
+                        )
                     }
                     composable<Home> {
                         HomeScreen(it.toRoute<Home>())
