@@ -2,7 +2,9 @@ package com.ladescoberta.studentlogs
 
 import android.app.Activity
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,7 +14,12 @@ import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
+import android.provider.MediaStore.Audio.Media
+import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,27 +34,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
 
 private const val TAG = "ManageForms"
 
 @Serializable
 object ManageForms
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun ManageFormsScreen(
     onDone: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = (LocalContext.current as? Activity)
-    if (checkPermissions(context)) {
-        Toast.makeText(context, "Permissions granted.", Toast.LENGTH_SHORT).show()
-    } else {
-        requestPermissions(activity!!)
-    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -64,32 +70,8 @@ fun ManageFormsScreen(
     }
 }
 
-fun checkPermissions(context: Context): Boolean{
-    var writeStoragePermission = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
 
-    var readStoragePermission = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
-
-    return writeStoragePermission == PackageManager.PERMISSION_GRANTED &&
-            readStoragePermission == PackageManager.PERMISSION_GRANTED
-}
-
-
-fun requestPermissions(activity: Activity){
-    ActivityCompat.requestPermissions(
-        activity,
-        arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ),
-        101
-    )
-}
+@RequiresApi(Build.VERSION_CODES.Q)
 fun generatePDF(context: Context){
     var pageHeight = 1120
     var pageWidth = 792
@@ -130,14 +112,29 @@ fun generatePDF(context: Context){
 
     pdfDocument.finishPage(myPage)
 
-    val file : File = File(Environment.getExternalStorageDirectory(), "SunnyDays.pdf")
-
-    try{
-        pdfDocument.writeTo(FileOutputStream(file))
-        Toast.makeText(context, "file created!", Toast.LENGTH_LONG).show()
-    } catch( e: Exception ){
-        e.printStackTrace()
-        Toast.makeText(context, "failed to generate file", Toast.LENGTH_LONG).show()
+    val contentResolver = context.contentResolver
+    val contentValues = ContentValues().apply{
+        put(MediaStore.MediaColumns.DISPLAY_NAME, "sunnydays.pdf")
+        put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
     }
+
+    val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+    if(uri != null){
+        var outputStream: OutputStream? = null
+        try{
+            outputStream = contentResolver.openOutputStream(uri)
+            pdfDocument.writeTo(outputStream)
+            Toast.makeText(context, "file created!", Toast.LENGTH_LONG).show()
+        }
+        catch( e: Exception ){
+            e.printStackTrace()
+            Toast.makeText(context, "failed to generate file", Toast.LENGTH_LONG).show()
+        }
+        finally{
+            outputStream?.close()
+        }
+    }
+
     pdfDocument.close()
 }
