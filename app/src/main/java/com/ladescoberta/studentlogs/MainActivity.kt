@@ -2,9 +2,11 @@ package com.ladescoberta.studentlogs
 
 import ManageStudents
 import ManageStudentsScreen
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -111,9 +113,10 @@ class MainActivity : ComponentActivity() {
                                 //val success = navController.popBackStack()
                                 //Log.e(TAG, "successful pop? " + success.toString())
                                 // TODO WHY DOESNT popBackStack always work?
-                                if (!navController.popBackStack()) {
-                                    navController.navigate(ScreenA)
-                                }
+                                //if (!navController.popBackStack()) {
+                                //    navController.navigate(ScreenA)
+                                //}
+                                navController.navigateUp()
                             }
                         )
                     }
@@ -157,6 +160,26 @@ class MainActivity : ComponentActivity() {
                     composable<Home> {
                         HomeScreen(it.toRoute<Home>())
                     }
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 101){
+            if(grantResults.size > 1){ // code example says to check if greater than 0, but it seems to make more sense that there are at least two results since we are requesting two
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "Permissions granted!", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    Toast.makeText(this, "Permissions not granted....", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             }
         }
