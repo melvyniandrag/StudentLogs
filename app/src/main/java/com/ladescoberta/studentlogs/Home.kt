@@ -1,5 +1,6 @@
 package com.ladescoberta.studentlogs
 
+import ManageStudents
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,22 +17,55 @@ import androidx.navigation.NavController
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Home(
-    val s1 : String?,
-    val s2: String?
-)
+object Home
 
 @Composable
 fun HomeScreen(
-    args: Home
+    navController: NavController
 ){
     Column(
-        modifier= Modifier.fillMaxSize(),
+        modifier=Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        Button(onClick = {
+            navController.navigate(ManageStudents)
+        },
+            modifier = Modifier
+                .size(width = 200.dp, height = 80.dp)
+                .padding(10.dp)
+        ){
+            Text(text = stringResource(R.string.home_page_manage_students))
+        }
 
-            Text(text = "received data ${args.s1} and ${args.s2}")
+        Button(onClick = {
+            navController.navigate(AddRowToBillingInvoice)
+        },
+            modifier = Modifier
+                .size(width = 200.dp, height = 80.dp)
+                .padding(10.dp)
+        ){
+            Text(text = stringResource(R.string.home_page_click_to_add_session))
+        }
 
+        Button(onClick = {
+            navController.navigate(ManageSessions)
+        },
+            modifier = Modifier
+                .size(width = 200.dp, height = 80.dp)
+                .padding(10.dp)
+        ){
+            Text(text = stringResource(id = R.string.home_page_click_to_edit_session))
+        }
+
+        Button(onClick = {
+            navController.navigate(ManageForms)
+        },
+            modifier = Modifier
+                .size(width = 200.dp, height = 80.dp)
+                .padding(10.dp)
+        ){
+            Text(text = stringResource(id = R.string.home_page_click_to_manage_reports))
+        }
     }
 }

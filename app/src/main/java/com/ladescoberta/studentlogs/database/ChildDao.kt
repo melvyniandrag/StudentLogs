@@ -19,7 +19,7 @@ import androidx.room.Update
     fun update(child: Child)
 
     @Insert
-    fun insert(child: Child)
+    suspend fun insert(child: Child)
 
     @Delete
     fun delete(child: Child)

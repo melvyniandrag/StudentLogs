@@ -10,13 +10,13 @@ import androidx.room.Update
 // TODO
 // Consider whether or not to make the various methods here "suspend" methods
 // OR we could have them return LiveData<TeachingSession>
-// OR we could have them return Flow<TeachingSession>
+// OR we could have them return Flow<TeachingSession>suspen
 // OR we could just leave them synchronous as they are.
 // Undoubtedly there are other options as well.
 @Dao
 interface TeachingSessionDao {
     @Query("SELECT * FROM TeachingSession")
-    fun getAll(): List<TeachingSession>
+    suspend fun getAll(): List<TeachingSession>
 
     @Query("SELECT * FROM TeachingSession WHERE sessionID = :sessionID LIMIT 1")
     fun getByID(sessionID: Int): TeachingSession

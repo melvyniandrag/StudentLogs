@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Child(
-    @PrimaryKey val childID: Int,
+    @PrimaryKey(autoGenerate = true) val childID: Int = 0,
 
     @ColumnInfo(name = "first_name")
     val firstName: String,

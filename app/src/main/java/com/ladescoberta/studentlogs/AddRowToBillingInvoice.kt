@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ladescoberta.studentlogs.R
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -37,7 +36,7 @@ object AddRowToBillingInvoice
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddRowToBillingInvoiceScreen(
-    onSave: () -> Unit
+    onDone: () -> Unit
 ){
     var firstName by rememberSaveable { mutableStateOf("John")}
     // Too bad this doesnt work it would be cool to have the default value be taken from the string resources
@@ -161,12 +160,21 @@ fun AddRowToBillingInvoiceScreen(
         )
         Button(
             onClick = {
-                Log.e(TAG, "about to call onSave()")
-                onSave()
+                Log.e(TAG, "TODO - save session to the database")
+                onDone()
             },
             modifier = Modifier.size(width=200.dp, height=80.dp).padding(10.dp)
         ){
             Text(text = "Save Session")
+        }
+        Button(
+            onClick = {
+                Log.e(TAG, "cancelled saving the session")
+                onDone()
+            },
+            modifier = Modifier.size(width=200.dp, height=80.dp).padding(10.dp)
+        ){
+            Text(text = "Cancel")
         }
 
     }

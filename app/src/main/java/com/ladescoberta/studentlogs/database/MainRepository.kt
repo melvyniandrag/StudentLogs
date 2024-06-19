@@ -1,6 +1,9 @@
 package com.ladescoberta.studentlogs.database
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainRepository(context: Context) {
     private val childDao: ChildDao
@@ -18,10 +21,12 @@ class MainRepository(context: Context) {
     }
 
     fun addChild(newChild : Child) : Unit{
-        childDao.insert(newChild)
+        CoroutineScope(Dispatchers.IO).launch {
+            childDao.insert(newChild)
+        }
     }
 
-    fun getAllTeachingSessions(): List<TeachingSession>{
+    suspend fun getAllTeachingSessions(): List<TeachingSession>{
         return teachingSessionDao.getAll()
     }
 
