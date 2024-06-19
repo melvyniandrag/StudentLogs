@@ -25,6 +25,12 @@ class MainRepository(context: Context) {
         }
     }
 
+    fun deleteChild(child: Child) : Unit{
+        CoroutineScope(Dispatchers.IO).launch {
+            childDao.delete(child)
+        }
+    }
+
     suspend fun getAllTeachingSessions(): List<TeachingSession>{
         return teachingSessionDao.getAll()
     }

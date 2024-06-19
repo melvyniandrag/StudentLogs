@@ -129,7 +129,8 @@ fun ListAllStudents(repository: MainRepository){
                         fontSize = 22.sp
                     )
                     Button(onClick={
-                        Toast.makeText(context, "deleted", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Deleting ${child.firstName} ${child.lastName}", Toast.LENGTH_SHORT).show()
+                        repository.deleteChild(child)
                     }){
                         Text("delete")
                     }

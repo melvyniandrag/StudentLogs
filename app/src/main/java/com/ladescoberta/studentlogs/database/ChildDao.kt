@@ -25,4 +25,6 @@ import kotlinx.coroutines.flow.Flow
     @Delete
     fun delete(child: Child)
 
+    @Query("DELETE FROM Child WHERE childID = :id")
+    suspend fun deleteChildByID(id: Int)
 }
