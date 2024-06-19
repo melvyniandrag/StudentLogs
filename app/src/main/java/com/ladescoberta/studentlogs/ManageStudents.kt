@@ -1,30 +1,47 @@
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.Medium
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.ladescoberta.studentlogs.R
@@ -50,11 +67,12 @@ fun ManageStudentsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Log.e("size", "portrait")
-            Row(modifier = Modifier.fillMaxHeight(0.5F)){
+            Row(modifier = Modifier.fillMaxHeight(0.5F),
+                verticalAlignment = Alignment.CenterVertically){
                 AddNewStudent(onDone = onDone, repository = repository)
             }
-            Row(modifier = Modifier.fillMaxHeight(0.5F)){
-                ListAllStudents()
+            Row(modifier = Modifier.fillMaxHeight()){
+                ListAllStudents(repository)
             }
         }
     }
@@ -64,20 +82,61 @@ fun ManageStudentsScreen(
             Column(modifier=Modifier.fillMaxWidth(0.5F)) {
                 AddNewStudent(onDone = onDone, repository = repository)
             }
-            Column(modifier=Modifier.fillMaxWidth(0.5F)) {
-                ListAllStudents()
+            Column(modifier=Modifier.fillMaxWidth()) {
+                ListAllStudents(repository)
             }
         }
     }
 }
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ListAllStudents(){
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(text = "hello")
-        Text(text = "hello")
-        Text(text = "hello")
+fun ListAllStudents(repository: MainRepository){
+    val children by repository.allChildren.collectAsState(initial = emptyList())
+    val context = LocalContext.current
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(50.dp),
+    )
+    {
+        stickyHeader {
+            Surface(modifier = Modifier.fillMaxWidth()) {
+                Text("All my students",
+                    textAlign = TextAlign.Center,
+                    fontSize = 30.sp,
+                    fontWeight = Bold)
+            }
+        }
+        items(children){ child ->
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(2.dp)
+            ) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                    Text(
+                        text = child.firstName,
+                        fontWeight = Bold,
+                        fontSize = 22.sp
+                    )
+                    Text(
+                        text = child.lastName,
+                        fontSize = 22.sp
+                    )
+                    Button(onClick={
+                        Toast.makeText(context, "deleted", Toast.LENGTH_SHORT).show()
+                    }){
+                        Text("delete")
+                    }
+
+                }
+            }
+        }
     }
 
 
@@ -94,12 +153,14 @@ fun AddNewStudent(
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "Add a Student",
-            modifier = Modifier.padding(10.dp)
-        )
+            modifier = Modifier.padding(10.dp),
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp,
+            fontWeight = Bold)
         TextField(
             value = firstName,
             onValueChange = {
@@ -123,7 +184,9 @@ fun AddNewStudent(
                     repository.addChild(newChild)
                     Toast.makeText(context, "Child $firstName $lastName saved", Toast.LENGTH_LONG)
                         .show()
-                    onDone()
+                    focusManager.clearFocus()
+                    firstName = ""
+                    lastName = ""
                 } else {
                     Toast.makeText(
                         context,
@@ -146,7 +209,7 @@ fun AddNewStudent(
                 .size(width = 200.dp, height = 80.dp)
                 .padding(10.dp)
         ) {
-            Text("Cancel")
+            Text("Done")
         }
 
     }

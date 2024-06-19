@@ -3,6 +3,7 @@ package com.ladescoberta.studentlogs.database
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class MainRepository(context: Context) {
@@ -16,9 +17,7 @@ class MainRepository(context: Context) {
         teachingSessionDao = database.teachingSessionDao()
     }
 
-    fun getAllChildren() : List<Child>{
-        return childDao.getAll()
-    }
+    val allChildren : Flow<List<Child>> = childDao.getAllSortedByLastName()
 
     fun addChild(newChild : Child) : Unit{
         CoroutineScope(Dispatchers.IO).launch {
