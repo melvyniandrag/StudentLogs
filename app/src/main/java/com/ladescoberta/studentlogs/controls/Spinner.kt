@@ -56,6 +56,7 @@ fun Spinner(
                     },
                     onClick={
                         isExpanded = false
+                        Log.i(TAG, "onClick")
                         onItemSelected(it)
                     }
                 )

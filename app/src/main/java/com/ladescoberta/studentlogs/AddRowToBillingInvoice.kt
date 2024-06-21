@@ -3,29 +3,39 @@ package com.ladescoberta.studentlogs
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ladescoberta.studentlogs.controls.SessionTypePicker
 import com.ladescoberta.studentlogs.controls.Spinner
+import io.github.joelkanyi.sain.Sain
+import io.github.joelkanyi.sain.SignatureAction
+import io.github.joelkanyi.sain.SignatureState
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -67,9 +77,13 @@ fun AddRowToBillingInvoiceScreen(
 
     var sessionLocation by rememberSaveable { mutableStateOf("Library" ) }
 
-
     val serviceTypes = listOf("DI", "Speech", "OT")
-    val times = listOf("12:00AM", "1:00AM")
+    val signatureState = remember {
+        SignatureState()
+    }
+    var imageBitmap: ImageBitmap? by remember {
+        mutableStateOf(null)
+    }
 
     Column(
         modifier= Modifier
@@ -84,6 +98,44 @@ fun AddRowToBillingInvoiceScreen(
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp
         )
+
+        Sain(
+            state = signatureState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .border(
+                    BorderStroke(
+                        width = .5.dp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ),
+            onComplete = { signatureBitmap ->
+                if (signatureBitmap != null) {
+                    imageBitmap = signatureBitmap
+                } else {
+                    println("Signature is empty")
+                }
+            },
+        ){ action ->
+
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    imageBitmap = null
+                    action(SignatureAction.CLEAR)
+                }) {
+                Text("Clear")
+            }
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    action(SignatureAction.COMPLETE)
+                }) {
+                Text("Complete")
+            }
+        }
         Spinner(
             onItemSelected = {
                serviceType = it
