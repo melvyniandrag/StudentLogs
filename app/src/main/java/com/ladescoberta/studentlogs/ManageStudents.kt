@@ -3,6 +3,7 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -67,11 +70,18 @@ fun ManageStudentsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Log.e("size", "portrait")
-            Row(modifier = Modifier.fillMaxHeight(0.5F),
-                verticalAlignment = Alignment.CenterVertically){
+            Row(
+                modifier = Modifier.wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(0.dp, 30.dp, 0.dp, 20.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+
+            ){
                 AddNewStudent(onDone = onDone, repository = repository)
             }
-            Row(modifier = Modifier.fillMaxHeight()){
+            Row(modifier = Modifier.fillMaxHeight()
+                .padding(30.dp, 0.dp, 30.dp, 10.dp)){
                 ListAllStudents(repository)
             }
         }
@@ -79,10 +89,12 @@ fun ManageStudentsScreen(
     else{
         Row(modifier = Modifier.fillMaxSize()){
             Log.e("size", "landscape")
-            Column(modifier=Modifier.fillMaxWidth(0.5F)) {
+            Column(modifier=Modifier.fillMaxWidth(0.5F)
+                .padding(30.dp, 30.dp, 10.dp, 30.dp)
+                .align(Alignment.CenterVertically)) {
                 AddNewStudent(onDone = onDone, repository = repository)
             }
-            Column(modifier=Modifier.fillMaxWidth()) {
+            Column(modifier=Modifier.fillMaxWidth().padding(10.dp, 30.dp, 30.dp, 30.dp)) {
                 ListAllStudents(repository)
             }
         }
@@ -96,7 +108,6 @@ fun ListAllStudents(repository: MainRepository){
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(50.dp),
     )
     {
         stickyHeader {
@@ -152,13 +163,14 @@ fun AddNewStudent(
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .wrapContentSize(align = Alignment.TopCenter),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
         Text(
             text = "Add a Student",
-            modifier = Modifier.padding(10.dp),
             textAlign = TextAlign.Center,
             fontSize = 30.sp,
             fontWeight = Bold)
@@ -167,16 +179,14 @@ fun AddNewStudent(
             onValueChange = {
                 firstName = it
             },
-            label = { Text(stringResource(R.string.session_data_student_first_name)) },
-            modifier = Modifier.padding(10.dp)
+            label = { Text(stringResource(R.string.session_data_student_first_name)) }
         )
         TextField(
             value = lastName,
             onValueChange = {
                 lastName = it
             },
-            label = { Text(stringResource(R.string.session_data_student_last_name)) },
-            modifier = Modifier.padding(10.dp)
+            label = { Text(stringResource(R.string.session_data_student_last_name)) }
         )
         Button(
             onClick = {
@@ -197,8 +207,7 @@ fun AddNewStudent(
                 }
             },
             modifier = Modifier
-                .size(width = 200.dp, height = 80.dp)
-                .padding(10.dp)
+                .size(width = 200.dp, height = 50.dp)
         ) {
             Text("Save")
         }
@@ -207,8 +216,7 @@ fun AddNewStudent(
                 onDone()
             },
             modifier = Modifier
-                .size(width = 200.dp, height = 80.dp)
-                .padding(10.dp)
+                .size(width = 200.dp, height = 50.dp)
         ) {
             Text("Done")
         }

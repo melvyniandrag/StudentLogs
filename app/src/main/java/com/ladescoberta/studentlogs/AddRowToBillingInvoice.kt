@@ -24,6 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ladescoberta.studentlogs.controls.SessionTypePicker
+import com.ladescoberta.studentlogs.controls.Spinner
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -66,6 +68,8 @@ fun AddRowToBillingInvoiceScreen(
     var sessionLocation by rememberSaveable { mutableStateOf("Library" ) }
 
 
+    val serviceTypes = listOf("DI", "Speech", "OT")
+    val times = listOf("12:00AM", "1:00AM")
 
     Column(
         modifier= Modifier
@@ -79,6 +83,13 @@ fun AddRowToBillingInvoiceScreen(
             text = stringResource(R.string.session_data_header),
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp
+        )
+        Spinner(
+            onItemSelected = {
+               serviceType = it
+            },
+            choices = serviceTypes,
+            currentSelection = serviceType
         )
         TextField(
             value = firstName,
@@ -163,7 +174,9 @@ fun AddRowToBillingInvoiceScreen(
                 Log.e(TAG, "TODO - save session to the database")
                 onDone()
             },
-            modifier = Modifier.size(width=200.dp, height=80.dp).padding(10.dp)
+            modifier = Modifier
+                .size(width = 200.dp, height = 80.dp)
+                .padding(10.dp)
         ){
             Text(text = "Save Session")
         }
@@ -172,7 +185,9 @@ fun AddRowToBillingInvoiceScreen(
                 Log.e(TAG, "cancelled saving the session")
                 onDone()
             },
-            modifier = Modifier.size(width=200.dp, height=80.dp).padding(10.dp)
+            modifier = Modifier
+                .size(width = 200.dp, height = 80.dp)
+                .padding(10.dp)
         ){
             Text(text = "Cancel")
         }
